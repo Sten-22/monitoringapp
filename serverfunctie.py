@@ -1,5 +1,7 @@
 from xmlrpc.server import SimpleXMLRPCServer
 from threading import Thread
+
+
 def print_memory(mem):
     #Prints memory usage sent by client
     print(f"Memory used by client: {mem}%")

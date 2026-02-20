@@ -22,3 +22,6 @@ print("Server listening on port 8000")
 
 #laat de server draaien tot deze stopt
 server.serve_forever()
+
+
+print(test)
