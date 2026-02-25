@@ -24,9 +24,3 @@ print("Server listening on port 8000")
 server.serve_forever()
 
 
-
-print(test)
-
-
-#jfnqkijeng
-
