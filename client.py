@@ -3,6 +3,7 @@ import psutil
 import time
 import subprocess
 from datetime import datetime, timedelta
+import socket
 
 INTERVAL_SECONDS = 60
 
@@ -38,7 +39,11 @@ while True:
     #stuur memory percentage naar de server
     proxy.print_memory(mem.percent)
 
-    get_failed_logins()
+    count = get_failed_logins()
+    hostname = socket.gethostname()
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    proxy.receive_failed_logins(hostname, count, timestamp)
     
 
 
