@@ -2,7 +2,7 @@ import requests
 import matplotlib.pyplot as plt
 import time
 
-url = "http://<IP_van_device>:8085/data.json"
+url = "http://localhost:8085/data.json"
 
 x_data = [] 
 y_data = []
