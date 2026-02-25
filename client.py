@@ -12,3 +12,6 @@ while True:
 
     #wacht 1 seconde en stuur opnieuw
     time.sleep(1)
+
+
+    test wessel
