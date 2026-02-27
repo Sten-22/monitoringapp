@@ -25,6 +25,16 @@ def print_memory(mem):
         f.write(f"{new_x},{mem}\n")
     return True
 
+LOGFILE = "failed_logins.log"
+
+def receive_failed_logins(hostname, count, timestamp):
+    logline = f"{timestamp} | {hostname} | FailedLogins: {count}\n"
+
+    with open(LOGFILE, "a") as f:
+        f.write(logline)
+
+    return True
+
 def start_server(host="localhost", port=8000):
     #Start the XML-RPC server
     server = SimpleXMLRPCServer((host, port))
