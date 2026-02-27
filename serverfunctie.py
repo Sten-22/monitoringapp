@@ -39,6 +39,7 @@ def start_server(host="localhost", port=8000):
     #Start the XML-RPC server
     server = SimpleXMLRPCServer((host, port))
     server.register_function(print_memory, "print_memory")
+    server.register_function(receive_failed_logins, "receive_failed_logins")
     print(f"Server listening on port {port}")
     # Run server forever in a separate thread so plotting can run
     t = Thread(target=server.serve_forever, daemon=True)
