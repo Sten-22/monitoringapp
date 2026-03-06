@@ -28,10 +28,25 @@ def print_memory(mem):
 LOGFILE = "failed_logins.log"
 
 def receive_failed_logins(hostname, count, timestamp):
-    logline = f"{timestamp} | {hostname} | FailedLogins: {count}\n"
+    logline = f"{count}"
+
+    #schrijf de memory naar het log bestand
+    try:
+        # Read the last line to get the last X value
+        with open("failed_logins.log", "r") as f:
+            lines = f.readlines()
+            if lines:
+                last_line = lines[-1].strip()
+                last_x = int(last_line.split(",")[0])
+            else:
+                last_x = 0
+    except FileNotFoundError:
+        last_x = 0  # File does not exist yet
+    
+    new_x = last_x + 1
 
     with open(LOGFILE, "a") as f:
-        f.write(logline)
+        f.write(f"{new_x},{logline}\n")
 
     return True
 
