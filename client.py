@@ -4,6 +4,7 @@ import time
 import subprocess
 from datetime import datetime, timedelta
 import socket
+from PyLibreHardwareMonitor import Computer
 
 INTERVAL_SECONDS = 60
 
@@ -35,6 +36,8 @@ def get_failed_logins():
         return 0
 
 
+
+
 def send_to_server(count):
     proxy = xmlrpc.client.ServerProxy(SERVER_URL, allow_none=True)
     hostname = socket.gethostname()
@@ -43,33 +46,30 @@ def send_to_server(count):
     proxy.receive_failed_logins(hostname, count, timestamp)
 
 
-if __name__ == "__main__":
-    count = get_failed_logins()
-    send_to_server(count)
+def get_cpu_temp():
+    computer = Computer()
 
-def get_failed_logins():
-    now = datetime.now()
-    since = (now - timedelta(seconds=INTERVAL_SECONDS)).strftime("%Y-%m-%dT%H:%M:%S")
+    #while True:
+    cpu_data = computer.cpu
+    # get the first CPU key (usually only one CPU)
+    cpu_name = list(cpu_data.keys())[0]
+    core_avg = cpu_data[cpu_name]["Temperature"]["Core Average"]
 
-    ps_command = f"""
-    $filter = @{{
-        LogName='Security'
-        Id=4625
-        StartTime='{since}'
-    }}
-    (Get-WinEvent -FilterHashtable $filter | Measure-Object).Count
-    """
-
-    result = subprocess.run(
-        ["powershell.exe", "-NoProfile", "-Command", ps_command],
-        capture_output=True,
-        text=True
-    )
-
+    #print(core_avg)  # or store it somewhere
     try:
-        return int(result.stdout.strip())
+        return round(core_avg,1)
     except:
         return 0
+
+def send_cpu_temp_to_server(cpu_temp):
+    proxy = xmlrpc.client.ServerProxy(SERVER_URL, allow_none=True)
+    #hostname = socket.gethostname()
+    #timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    proxy.receive_cpu_temp(cpu_temp)
+        
+
+
 
 while True:
     #verbind met de sevrer
@@ -80,6 +80,8 @@ while True:
     proxy.print_memory(mem.percent)
     count = get_failed_logins()
     send_to_server(count)
+    cpu_temp = get_cpu_temp()
+    send_cpu_temp_to_server(cpu_temp)
     
     
 
