@@ -11,6 +11,17 @@ INTERVAL_SECONDS = 60
 
 SERVER_URL = "http://localhost:8000"
 
+def get_memory_load():
+    memory_load = psutil.virtual_memory()
+    try:
+        return memory_load.percent
+    except:
+        return 0
+
+def send_memory_load_to_server(memory_load):
+    proxy = xmlrpc.client.ServerProxy(SERVER_URL, allow_none=True)
+    proxy.receive_memory_load(memory_load)
+
 def get_failed_logins():
     now = datetime.now()
     since = (now - timedelta(seconds=INTERVAL_SECONDS)).strftime("%Y-%m-%dT%H:%M:%S")
@@ -40,10 +51,9 @@ def get_failed_logins():
 
 def send_to_server(count):
     proxy = xmlrpc.client.ServerProxy(SERVER_URL, allow_none=True)
-    hostname = socket.gethostname()
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #hostname = socket.gethostname()
 
-    proxy.receive_failed_logins(hostname, count, timestamp)
+    proxy.receive_failed_logins(count)
 
 
 def get_cpu_temp():
@@ -63,29 +73,34 @@ def get_cpu_temp():
 
 def send_cpu_temp_to_server(cpu_temp):
     proxy = xmlrpc.client.ServerProxy(SERVER_URL, allow_none=True)
-    #hostname = socket.gethostname()
-    #timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     proxy.receive_cpu_temp(cpu_temp)
-        
 
+def get_cpu_load():
+    try:
+        return round(psutil.cpu_percent(interval=1),1)
+    except:
+        return 0
+
+def send_cpu_load_to_server(cpu_load):
+    proxy = xmlrpc.client.ServerProxy(SERVER_URL, allow_none=True)
+    proxy.receive_cpu_load(cpu_load)
 
 
 while True:
     #verbind met de sevrer
     proxy = xmlrpc.client.ServerProxy("http://localhost:8000")
-    #haal het percentage van gerbuikte geheugen op
-    mem = psutil.virtual_memory()
     #stuur memory percentage naar de server
-    proxy.print_memory(mem.percent)
+    memory_load = get_memory_load()
+    send_memory_load_to_server(memory_load)
+    
     count = get_failed_logins()
     send_to_server(count)
+    
     cpu_temp = get_cpu_temp()
     send_cpu_temp_to_server(cpu_temp)
     
-    
-
-
+    cpu_load = get_cpu_load()
+    send_cpu_load_to_server(cpu_load)
 
     #wacht 1 seconde en stuur opnieuw
     time.sleep(1)
