@@ -7,10 +7,10 @@ import io
 import os
 import configparser
 
-config = configparser.ConfigParser()
+config = configparser.ConfigParser()             #
 config.read("config.ini")
 
-memorylog = config["logging"]["memorylog"]
+memorylog = config["logging"]["memorylog"]          # Haalt de naam van het memorylog uit het ini bestand
 securitylog = config["logging"]["securitylog"]
 cputemplog = config["logging"]["cputemplog"]
 cpuloadlog = config["logging"]["cpuloadlog"]
