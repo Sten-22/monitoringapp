@@ -94,14 +94,14 @@ def receive_cpu_load(cpu_load):
 
     return True
 
-def start_server(host="localhost", port=8000):
-    #Start the XML-RPC server
-    server = SimpleXMLRPCServer((host, port))
-    server.register_function(receive_memory_load, "receive_memory_load")
+def start_server(host="localhost", port=8000):        # Functie om de XML-RPC server te starten
+
+    server = SimpleXMLRPCServer((host, port))         # Slaat de gegevens van de server op als de variabele server
+    server.register_function(receive_memory_load, "receive_memory_load")    # Deze lijnen zorgen ervoor dat de XML-RPC client de functies uit dit bestand kunnen aanroepen
     server.register_function(receive_failed_logins, "receive_failed_logins")
     server.register_function(receive_cpu_temp, "receive_cpu_temp")
     server.register_function(receive_cpu_load, "receive_cpu_load")
-    print(f"Server listening on port {port}")
-    # Run server forever in a separate thread so plotting can run
-    t = Thread(target=server.serve_forever, daemon=True)
-    t.start()
+    print(f"Server listening on port {port}")     # Print met welke poort de client moet verbinden
+
+    t = Thread(target=server.serve_forever, daemon=True)    # Runt de server in een aparte thread. Dit moet gedaan worden anders stopt het main bestand bij deze functie en kunnen de grafieken niet gemaakt worden
+    t.start()     # start de XML-RPC server
