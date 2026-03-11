@@ -1,8 +1,17 @@
 from xmlrpc.server import SimpleXMLRPCServer
 from threading import Thread
+import configparser
+
+config = configparser.ConfigParser()             #
+config.read("config.ini")
+
+memorylog = config["logging"]["memorylog"]          # Haalt de naam van het memorylog uit het ini bestand
+securitylog = config["logging"]["securitylog"]
+cputemplog = config["logging"]["cputemplog"]
+cpuloadlog = config["logging"]["cpuloadlog"]
 
 def receive_memory_load(memory_load):  # Functie die het memory percentage van de client ontvangt
-    LOGFILE = "memory_load.log"        # Variabele die bepaalt waar de log weggeschreven wordt
+    LOGFILE = memorylog        # Variabele die bepaalt waar de log weggeschreven wordt
     logline = f"{memory_load}"         # variabele die bepaalt wat er wordt weggeschreven op een nieuwe line van een log
     try:
         with open(LOGFILE, "r") as f:  # Opent het logbestand in de leesmodus
@@ -23,7 +32,7 @@ def receive_memory_load(memory_load):  # Functie die het memory percentage van d
     return True          # Geeft terug of het scrhijven is gelukt
                          # De volgende 3 functies gebruiken dezelfde logica. Refereer dus naar de comments hierboven om te begrijpen hoe het werkt.
 def receive_failed_logins(count):    
-    LOGFILE = "failed_logins.log"
+    LOGFILE = securitylog
     logline = f"{count}"
 
     # Schrijf de memory naar het log bestand
@@ -47,7 +56,7 @@ def receive_failed_logins(count):
     return True
 
 def receive_cpu_temp(cpu_temp):
-    LOGFILE = "cpu_temperatures.log"
+    LOGFILE = cputemplog
     logline = f"{cpu_temp}"
 
     #schrijf de memory naar het log bestand
@@ -71,7 +80,7 @@ def receive_cpu_temp(cpu_temp):
     return True
 
 def receive_cpu_load(cpu_load):
-    LOGFILE = "cpu_load.log"
+    LOGFILE = cpuloadlog
     logline = f"{cpu_load}"
 
     #schrijf de memory naar het log bestand
