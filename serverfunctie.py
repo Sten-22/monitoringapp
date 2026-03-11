@@ -38,7 +38,7 @@ def receive_failed_logins(count):
     # Schrijf de memory naar het log bestand
     try:
         # Read the last line to get the last X value
-        with open("failed_logins.log", "r") as f:
+        with open(LOGFILE, "r") as f:
             lines = f.readlines()
             if lines:
                 last_line = lines[-1].strip()
@@ -62,7 +62,7 @@ def receive_cpu_temp(cpu_temp):
     #schrijf de memory naar het log bestand
     try:
         # Read the last line to get the last X value
-        with open("cpu_temperatures.log", "r") as f:
+        with open(LOGFILE, "r") as f:
             lines = f.readlines()
             if lines:
                 last_line = lines[-1].strip()
@@ -86,7 +86,7 @@ def receive_cpu_load(cpu_load):
     #schrijf de memory naar het log bestand
     try:
         # Read the last line to get the last X value
-        with open("cpu_load.log", "r") as f:
+        with open(LOGFILE, "r") as f:
             lines = f.readlines()
             if lines:
                 last_line = lines[-1].strip()
