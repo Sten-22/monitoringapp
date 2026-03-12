@@ -79,8 +79,8 @@ def receive_cpu_temp(cpu_temp):
     return True
 
 def receive_cpu_load(cpu_load):
-    LOGFILE = cpuloadlog
-    logline = f"{cpu_load}"
+    LOGFILE = cpuloadlog                # Variabele die bepaalt waar de log weggeschreven wordt
+    logline = f"{cpu_load}"             # variabele die bepaalt wat er wordt weggeschreven op een nieuwe line van een log
 
     #schrijf de memory naar het log bestand
     try:
