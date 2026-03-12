@@ -31,51 +31,50 @@ def receive_memory_load(memory_load):  # Functie die het memory percentage van d
         f.write(f"{new_x},{logline}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde
     return True          # Geeft terug of het scrhijven is gelukt
                          # De volgende 3 functies gebruiken dezelfde logica. Refereer dus naar de comments hierboven om te begrijpen hoe het werkt.
+
 def receive_failed_logins(count):    
-    LOGFILE = securitylog
-    logline = f"{count}"
+    LOGFILE = securitylog           # Variabele die bepaalt waar de log weggeschreven wordt
+    logline = f"{count}"            # variabele die bepaalt wat er wordt weggeschreven op een nieuwe line van een log
 
-    # Schrijf de memory naar het log bestand
-    try:
-        # Read the last line to get the last X value
-        with open(LOGFILE, "r") as f:
-            lines = f.readlines()
-            if lines:
-                last_line = lines[-1].strip()
-                last_x = int(last_line.split(",")[0])
-            else:
-                last_x = 0
-    except FileNotFoundError:
-        last_x = 0  # File does not exist yet
     
-    new_x = last_x + 1
+    try:                                # Schrijf de memory naar het log bestand
+        with open(LOGFILE, "r") as f:   # Opent logfile in read mode
+            lines = f.readlines()       # Leest alle regels van het bestand
+            if lines:
+                last_line = lines[-1].strip()           # Leest laatste regel en stript en haalt de newlines weg
+                last_x = int(last_line.split(",")[0])   # Pakt de laatste regel uit de lijst, split de lijn op een komma en pakt de waarde die voor de komma staat      
+            else:
+                last_x = 0              # Bestand zonder regels: begint hij op 0
+    except FileNotFoundError:
+        last_x = 0                      # Als het bestand nog niet bestaat, bijv. als het de eerste keer is dat hij draait
+    
+    new_x = last_x + 1                  # Zorgt voor een oplopende teller, voor de grafiek om uit te lezen
 
-    with open(LOGFILE, "a") as f:
-        f.write(f"{new_x},{logline}\n")
+    with open(LOGFILE, "a") as f:       # Opent logfile bestand in 'append mode'. Nieuwe data wordt onderaan toegevoegd, niet overschreven
+        f.write(f"{new_x},{logline}\n") # Schrijft een nieuwe regel met een x as nummer en login count
 
-    return True
+    return True                         # Actie geslaagd
 
 def receive_cpu_temp(cpu_temp):
-    LOGFILE = cputemplog
-    logline = f"{cpu_temp}"
+    LOGFILE = cputemplog                # Variabele die bepaalt waar de log weggeschreven wordt
+    logline = f"{cpu_temp}"             # variabele die bepaalt wat er wordt weggeschreven op een nieuwe line van een log
 
     #schrijf de memory naar het log bestand
     try:
-        # Read the last line to get the last X value
         with open(LOGFILE, "r") as f:
             lines = f.readlines()
             if lines:
-                last_line = lines[-1].strip()
-                last_x = int(last_line.split(",")[0])
+                last_line = lines[-1].strip()           # Pakt het laatste object uit de lijst(Laatste regel) en haalt de newline tekens weg met strip()
+                last_x = int(last_line.split(",")[0])   # Pakt de laatste regel uit de lijst, split de lijn op een komma en pakt de waarde die voor de komma staat
             else:
-                last_x = 0
+                last_x = 0                              # Voer uit als het bestand leeg is. Zet waarde van x op 0 zodat de volgende waarde 1 wordt
     except FileNotFoundError:
-        last_x = 0  # File does not exist yet
+        last_x = 0          # Voer uit als het bestand niet bestaat. Zet waarde van x op 0 zodat de volgende waarde 1 wordt
     
-    new_x = last_x + 1
+    new_x = last_x + 1      # Zorgt dat de volgende lijn de volgende opvolgt met stappen van 1 er tussen.
 
-    with open(LOGFILE, "a") as f:
-        f.write(f"{new_x},{logline}\n")
+    with open(LOGFILE, "a") as f:           # Opent het logbestand in schrijfmodus
+        f.write(f"{new_x},{logline}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde
 
     return True
 
@@ -89,17 +88,17 @@ def receive_cpu_load(cpu_load):
         with open(LOGFILE, "r") as f:
             lines = f.readlines()
             if lines:
-                last_line = lines[-1].strip()
-                last_x = int(last_line.split(",")[0])
+                last_line = lines[-1].strip()               # Pakt het laatste object uit de lijst(Laatste regel) en haalt de newline tekens weg met strip()
+                last_x = int(last_line.split(",")[0])       # Pakt de laatste regel uit de lijst, split de lijn op een komma en pakt de waarde die voor de komma staat
             else:
-                last_x = 0
+                last_x = 0         # Voer uit als het bestand leeg is. Zet waarde van x op 0 zodat de volgende waarde 1 wordt
     except FileNotFoundError:
-        last_x = 0  # File does not exist yet
+        last_x = 0                 # Voer uit als het bestand niet bestaat. Zet waarde van x op 0 zodat de volgende waarde 1 wordt
     
-    new_x = last_x + 1
+    new_x = last_x + 1                      # Zorgt dat de volgende lijn de volgende opvolgt met stappen van 1 er tussen.
 
-    with open(LOGFILE, "a") as f:
-        f.write(f"{new_x},{logline}\n")
+    with open(LOGFILE, "a") as f:           # Opent het logbestand in schrijfmodus
+        f.write(f"{new_x},{logline}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde
 
     return True
 
