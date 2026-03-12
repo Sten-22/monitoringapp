@@ -1,6 +1,7 @@
 from xmlrpc.server import SimpleXMLRPCServer
 from threading import Thread
 import configparser
+import os
 
 config = configparser.ConfigParser()             #
 config.read("config.ini")
@@ -9,6 +10,29 @@ memorylog = config["logging"]["memorylog"]          # Haalt de naam van het memo
 securitylog = config["logging"]["securitylog"]
 cputemplog = config["logging"]["cputemplog"]
 cpuloadlog = config["logging"]["cpuloadlog"]
+
+
+max_log_size = 1000000     # Staat gelijk aan 1 mb
+max_backup_files = 3   
+
+def rotate_log(logfile):
+    if not os.path.exists(logfile):  # Als bestand niet bestaat: niks doen
+        return
+    
+    if os.path.getsize(logfile) < max_log_size: # Als bestand niet te groot is: doet niks
+        return
+    
+    oldest = f"{logfile}.{max_backup_files}"    # Verwijderd oudste bestand
+    if os.path.exists(oldest):
+        os.remove(oldest)
+
+    for i in range(max_backup_files - 1, 0, -1):    # Schuift benaming van de bestanden op
+        src = f"{logfile}.{i}"
+        dst = f"{logfile}.{i+1}"
+        if os.path.exists(src):
+            os.rename(src, dst)
+        
+        os.rename(logfile, f"{logfile}.1")  # Hernoem huidige log naar .1
 
 def receive_memory_load(memory_load):  # Functie die het memory percentage van de client ontvangt
     LOGFILE = memorylog        # Variabele die bepaalt waar de log weggeschreven wordt
@@ -26,6 +50,7 @@ def receive_memory_load(memory_load):  # Functie die het memory percentage van d
     
     new_x = last_x + 1   # Zorgt dat de volgende lijn de volgende opvolgt met stappen van 1 er tussen.
 
+    rotate_log(LOGFILE)
 
     with open(LOGFILE, "a") as f:           # Opent het logbestand in schrijfmodus
         f.write(f"{new_x},{logline}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde
@@ -50,6 +75,8 @@ def receive_failed_logins(count):
     
     new_x = last_x + 1                  # Zorgt voor een oplopende teller, voor de grafiek om uit te lezen
 
+    rotate_log(LOGFILE)
+
     with open(LOGFILE, "a") as f:       # Opent logfile bestand in 'append mode'. Nieuwe data wordt onderaan toegevoegd, niet overschreven
         f.write(f"{new_x},{logline}\n") # Schrijft een nieuwe regel met een x as nummer en login count
 
@@ -72,6 +99,8 @@ def receive_cpu_temp(cpu_temp):
         last_x = 0          # Voer uit als het bestand niet bestaat. Zet waarde van x op 0 zodat de volgende waarde 1 wordt
     
     new_x = last_x + 1      # Zorgt dat de volgende lijn de volgende opvolgt met stappen van 1 er tussen.
+
+    rotate_log(LOGFILE)
 
     with open(LOGFILE, "a") as f:           # Opent het logbestand in schrijfmodus
         f.write(f"{new_x},{logline}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde
@@ -96,6 +125,8 @@ def receive_cpu_load(cpu_load):
         last_x = 0                 # Voer uit als het bestand niet bestaat. Zet waarde van x op 0 zodat de volgende waarde 1 wordt
     
     new_x = last_x + 1                      # Zorgt dat de volgende lijn de volgende opvolgt met stappen van 1 er tussen.
+
+    rotate_log(LOGFILE)
 
     with open(LOGFILE, "a") as f:           # Opent het logbestand in schrijfmodus
         f.write(f"{new_x},{logline}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde
