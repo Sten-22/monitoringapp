@@ -6,7 +6,7 @@ import os
 config = configparser.ConfigParser()             #
 config.read("config.ini")
 
-xml_rpc_port = config["network"]["xml_rpc_port"]  
+xml_rpc_port = config.getint("network", "xml_rpc_port")
 xml_rpc_host = config["network"]["host"]  
 
 memorylog = config["logging"]["memorylog"]          # Haalt de naam van het memorylog uit het ini bestand
@@ -136,7 +136,7 @@ def receive_cpu_load(cpu_load):
 
     return True
 
-def start_server(host=xml_rpc_host, port=xml_rpc_port):        # Functie om de XML-RPC server te starten
+def start_server(host=f"{xml_rpc_host}", port=xml_rpc_port):        # Functie om de XML-RPC server te starten
 
     server = SimpleXMLRPCServer((host, port))         # Slaat de gegevens van de server op als de variabele server
     server.register_function(receive_memory_load, "receive_memory_load")    # Deze lijnen zorgen ervoor dat de XML-RPC client de functies uit dit bestand kunnen aanroepen
