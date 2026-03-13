@@ -1,7 +1,7 @@
 import matplotlib  
 matplotlib.use("Agg") # voorkomt dat er geen GUI nodig is zodat deze foutmelding verholpen is: RuntimeError: main thread is not in main loop
 import threading
-from flask import Flask, Response #ter behoeve van de webserver
+from flask import Flask, Response #Flask voor de webserver
 import matplotlib.pyplot as plt  
 import io
 import os
@@ -10,20 +10,22 @@ import configparser
 config = configparser.ConfigParser()             
 config.read("config.ini")                 # Leest de Config.ini uit zodat de waardes gebruikt kunnen worden
 
-memorylog = config["logging"]["memorylog"]    # Haalt de namen van de logs uit het ini bestand
+#haalt de namen van de log uit de ini file
+memorylog = config["logging"]["memorylog"] 
 securitylog = config["logging"]["securitylog"]
 cputemplog = config["logging"]["cputemplog"]
 cpuloadlog = config["logging"]["cpuloadlog"]
 
-app = Flask(__name__)        # maakt een object voor de webserver aan
+app = Flask(__name__)        #maakt een object voor de webserver aan
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))      # Stelt de huide directory in als working directory zodat de log bestanden goed uitgelezen worden
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))      # Stelt de huide directory in als working directory zodat de log bestanden uitgelezen worden
 memory_file = os.path.join(BASE_DIR, memorylog)       # Zorgt ervoor dat de variabelenen gekoppeld zijn aan de juiste locatie van de logbestanden
 security_file = os.path.join(BASE_DIR, securitylog)
 cpu_temp_file = os.path.join(BASE_DIR, cputemplog)
 cpu_load_file = os.path.join(BASE_DIR, cpuloadlog)         
 
-memory_buffer = []          # Maak lege lijsten aan waar de opgehaalde waardes uit de logs in terecht komen
+#maakt lege lijsten aan waar de logs in komen
+memory_buffer = []          
 security_buffer = []
 temp_buffer = []
 load_buffer = []
@@ -43,7 +45,8 @@ def read_last_value(file):
 def generate_dashboard():                #functie om de grafieken te maken
     global memory_buffer, security_buffer, temp_buffer, load_buffer
 
-    fig, axes = plt.subplots(2, 2, figsize=(10, 6))
+    #dashboard layout 2x2 grid
+    fig, axes = plt.subplots(2, 2, figsize=(10, 6)) 
     ax1, ax2, ax3, ax4 = axes.flatten()
 
     MAX_POINTS = 60
@@ -54,32 +57,33 @@ def generate_dashboard():                #functie om de grafieken te maken
         if len(buf) > MAX_POINTS:
             buf.pop(0)
 
-    # read newest values from logs
+    #leest de laatste value uit de log
     mem = read_last_value(memory_file)
     sec = read_last_value(security_file)
     tmp = read_last_value(cpu_temp_file)
     lod = read_last_value(cpu_load_file)
 
-    # update buffers
+    #update de buffers
     update_buffer(memory_buffer, mem)
     update_buffer(security_buffer, sec)
     update_buffer(temp_buffer, tmp)
     update_buffer(load_buffer, lod)
 
-    # x-axis for last 60 refreshes
+    #x-as 60 seconde refresh
     x_mem = list(range(len(memory_buffer)))
     x_sec = list(range(len(security_buffer)))
     x_tmp = list(range(len(temp_buffer)))
     x_lod = list(range(len(load_buffer)))
 
-    # memory usage
+    #memory usage
     ax1.plot(x_mem, memory_buffer)
     ax1.set_xlim(0, 60)
     ax1.set_title("Memory Usage In %")
     ax1.set_ylim(0, 100)
     ax1.set_xticklabels([])
     ax1.set_xlabel("Last 60 seconds")
-    # failed logins
+
+    #failed logins
     ax2.plot(x_sec, security_buffer)
     ax2.set_xlim(0, 60)
     ax2.set_title("Failed Login Counter")
@@ -87,7 +91,7 @@ def generate_dashboard():                #functie om de grafieken te maken
     ax2.set_xticklabels([])
     ax2.set_xlabel("Last 60 seconds")
 
-    # cpu temperature
+    #cpu temperature
     ax3.plot(x_tmp, temp_buffer)
     ax3.set_xlim(0, 60)
     ax3.set_title("CPU Temperature in °C")
@@ -95,7 +99,7 @@ def generate_dashboard():                #functie om de grafieken te maken
     ax3.set_xticklabels([])
     ax3.set_xlabel("Last 60 seconds")
 
-    # cpu load
+    #cpu load
     ax4.plot(x_lod, load_buffer)
     ax4.set_xlim(0, 60)
     ax4.set_title("CPU Usage In %")
@@ -117,10 +121,10 @@ def dashboard():
     img = generate_dashboard()
     return Response(img.getvalue(), mimetype="image/png")
 
-
-@app.route("/")      # Hoofdpagina van de webserver
-def index():         # Voer deze functie uit als iemand de hoofdpagina bezoekt
-                     # Returnt de volgende HTML code
+#HTLM van de webserver
+@app.route("/")      
+def index():       
+                     
     return """       
     <html>
     <body>
