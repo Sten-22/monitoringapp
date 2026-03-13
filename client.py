@@ -5,10 +5,16 @@ import subprocess
 from datetime import datetime, timedelta
 from threading import Thread
 from PyLibreHardwareMonitor import Computer
+import configparser
 
+config = configparser.ConfigParser()             
+config.read("config.ini")                 # Leest de Config.ini uit zodat de waardes gebruikt kunnen worden
+
+host = config["network"]["host"] 
+xml_rpc_port = config["network"]["xml_rpc_port"] 
 
 INTERVAL_SECONDS = 60                 # Deze variabele bepaalt hoeveel seconden terug in de security log wordt gekeken voor failed logins
-SERVER_URL = "http://localhost:8000"  # Variabele voor het adres van de XML-RPC server
+SERVER_URL = f"http://{host}:{xml_rpc_port}"  # Variabele voor het adres van de XML-RPC server
 
 computer = Computer()                    # Maakt een object aan voor computer d.m.v pylibrehardwaremonitor. Hiermee kan de temperatuur uitgelezen worden
 cpu_name = list(computer.cpu.keys())[0]  # Maakt een list aan met alle cpu's en pakt de eerste entry(index 0). deze wordt opgeslagen als cpu_name
