@@ -7,10 +7,10 @@ import io
 import os
 import configparser
 
-config = configparser.ConfigParser()             #
-config.read("config.ini")
+config = configparser.ConfigParser()             
+config.read("config.ini")                 # Leest de Config.ini uit zodat de waardes gebruikt kunnen worden
 
-memorylog = config["logging"]["memorylog"]          # Haalt de naam van het memorylog uit het ini bestand
+memorylog = config["logging"]["memorylog"]    # Haalt de namen van de logs uit het ini bestand
 securitylog = config["logging"]["securitylog"]
 cputemplog = config["logging"]["cputemplog"]
 cpuloadlog = config["logging"]["cpuloadlog"]
@@ -23,15 +23,15 @@ security_file = os.path.join(BASE_DIR, securitylog)
 cpu_temp_file = os.path.join(BASE_DIR, cputemplog)
 cpu_load_file = os.path.join(BASE_DIR, cpuloadlog)         
 
-memory_buffer = []
+memory_buffer = []          # Maak lege lijsten aan waar de opgehaalde waardes uit de logs in terecht komen
 security_buffer = []
 temp_buffer = []
 load_buffer = []
 
-MAX_POINTS = 60
+MAX_POINTS = 60             # Variabele die het maximum aantal punten in de buffers bepaalt
 
 
-def read_last_value(file):
+def read_last_value(file):    
     try:
         with open(file, "r") as f:
             last = f.readlines()[-1]
@@ -75,22 +75,33 @@ def generate_dashboard():                #functie om de grafieken te maken
     # memory usage
     ax1.plot(x_mem, memory_buffer)
     ax1.set_xlim(0, 60)
-    ax1.set_title("Memory Usage")
-
+    ax1.set_title("Memory Usage In %")
+    ax1.set_ylim(0, 100)
+    ax1.set_xticklabels([])
+    ax1.set_xlabel("Last 60 seconds")
     # failed logins
     ax2.plot(x_sec, security_buffer)
     ax2.set_xlim(0, 60)
-    ax2.set_title("Failed Logins")
+    ax2.set_title("Failed Login Counter")
+    ax2.set_ylim(0, 5)
+    ax2.set_xticklabels([])
+    ax2.set_xlabel("Last 60 seconds")
 
     # cpu temperature
     ax3.plot(x_tmp, temp_buffer)
     ax3.set_xlim(0, 60)
-    ax3.set_title("CPU Temperature")
+    ax3.set_title("CPU Temperature in °C")
+    ax3.set_ylim(0, 100)
+    ax3.set_xticklabels([])
+    ax3.set_xlabel("Last 60 seconds")
 
     # cpu load
     ax4.plot(x_lod, load_buffer)
     ax4.set_xlim(0, 60)
-    ax4.set_title("CPU Load")
+    ax4.set_title("CPU Usage In %")
+    ax4.set_ylim(0, 100)
+    ax4.set_xticklabels([])
+    ax4.set_xlabel("Last 60 seconds")
 
     plt.tight_layout()
 
