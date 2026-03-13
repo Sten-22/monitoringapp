@@ -86,6 +86,7 @@ def send_async(func, value):        # Zorgt dat de bovenstaande functies in hun 
     Thread(target=func, args=(value,), daemon=True).start()  # De functie die gestart moet wordne en welke value meegegeven moet worden naar de server
 
 # Main loop
+print(f"Client is gestart en stuurt data naar {SERVER_URL}")
 try:
     while True:     # Slaat de alle metrics op in variabelen zodat deze doorgestuurd kunnen worden
         mem = get_memory_load()
