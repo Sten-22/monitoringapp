@@ -6,7 +6,7 @@ import configparser
 config = configparser.ConfigParser()        # Zet de varibale voor het config bestand
 config.read("config.ini")                   # Leest alle instellingen uit dit bestand
 
-web_server_port = config.getint("network", "web_server_port")     # Leest de netwerk en poort instellingen, als integer door 'getint'
+web_server_port = config["network"]["web_server_port"]     # Leest de netwerk en poort instellingen, als integer door 'getint'
 
 def main():     # Start het hele feestje
     start_server()
@@ -16,3 +16,4 @@ def main():     # Start het hele feestje
 if __name__ == "__main__":  # Start dit script alleen als dit bestand zelf gestart wordt, dus main bestand is
     main()
     app.run(host="0.0.0.0", port=web_server_port)      # Start webserver op alle netwerkinterfaces. En gebruikt de instellingen uit het config bestand
+
