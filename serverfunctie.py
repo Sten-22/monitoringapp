@@ -2,6 +2,7 @@ from xmlrpc.server import SimpleXMLRPCServer
 from threading import Thread
 import configparser
 import os
+import datetime
 
 config = configparser.ConfigParser()             #
 config.read("config.ini")
@@ -56,7 +57,7 @@ def receive_memory_load(memory_load):  # Functie die het memory percentage van d
     rotate_log(LOGFILE)
 
     with open(LOGFILE, "a") as f:           # Opent het logbestand in schrijfmodus
-        f.write(f"{new_x},{logline}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde
+        f.write(f"{new_x},{logline},{datetime.datetime.now()}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde, na nog een komma de tijd en datum
     return True          # Geeft terug of het scrhijven is gelukt
                          # De volgende 3 functies gebruiken dezelfde logica. Refereer dus naar de comments hierboven om te begrijpen hoe het werkt.
 
@@ -81,7 +82,7 @@ def receive_failed_logins(count):
     rotate_log(LOGFILE)
 
     with open(LOGFILE, "a") as f:       # Opent logfile bestand in 'append mode'. Nieuwe data wordt onderaan toegevoegd, niet overschreven
-        f.write(f"{new_x},{logline}\n") # Schrijft een nieuwe regel met een x as nummer en login count
+        f.write(f"{new_x},{logline},{datetime.datetime.now()}\n") # Schrijft een nieuwe regel met een x as nummer en login count
 
     return True                         # Actie geslaagd
 
@@ -106,7 +107,7 @@ def receive_cpu_temp(cpu_temp):
     rotate_log(LOGFILE)
 
     with open(LOGFILE, "a") as f:           # Opent het logbestand in schrijfmodus
-        f.write(f"{new_x},{logline}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde
+        f.write(f"{new_x},{logline},{datetime.datetime.now()}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde
 
     return True
 
@@ -132,7 +133,7 @@ def receive_cpu_load(cpu_load):
     rotate_log(LOGFILE)
 
     with open(LOGFILE, "a") as f:           # Opent het logbestand in schrijfmodus
-        f.write(f"{new_x},{logline}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde
+        f.write(f"{new_x},{logline},{datetime.datetime.now()}\n")     # Voor de komma komt een opeenvolgend nummer. Na de komma komt de opgehaalde waarde
 
     return True
 
