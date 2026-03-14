@@ -24,7 +24,7 @@ security_file = os.path.join(BASE_DIR, securitylog)
 cpu_temp_file = os.path.join(BASE_DIR, cputemplog)
 cpu_load_file = os.path.join(BASE_DIR, cpuloadlog)         
 
-#maakt lege lijsten aan waar de logs in komen
+#maakt lege lijsten aan waar een buffer met waardes uit de logs in komen
 memory_buffer = []          
 security_buffer = []
 temp_buffer = []
