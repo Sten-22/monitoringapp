@@ -140,12 +140,6 @@ def index():            # Voer deze functie uit als iemand de hoofdpagina bezoek
     </body>
     </html>
     """
-#def start_web_server():              # Functie om de webserver te starten
-#    thread = threading.Thread(       #
-#        target=lambda: app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
- #   )
-#    thread.daemon = True
-#    thread.start()
-#    return thread
+
 
 
