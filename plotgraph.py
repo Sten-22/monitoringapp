@@ -33,31 +33,31 @@ load_buffer = []
 MAX_POINTS = 60             # Variabele die het maximum aantal punten in de buffers bepaalt
 
 
-def read_last_value(file):    
+def read_last_value(file):    # Functie die de waarde van de laatste logline uitleest
     try:
-        with open(file, "r") as f:
-            last = f.readlines()[-1]
-            parts = last.split(",")
-            return float(parts[1])
+        with open(file, "r") as f:   # Opent het logbestand in leesmodus
+            last = f.readlines()[-1]    # Slaat de laatste line op in de variabele last
+            parts = last.split(",")     # Split de line op de komma en slaat deze op als list
+            return float(parts[1])   # returnt index 1 van de list, dit is de waarde die in de grafiek komt.
     except:
-        return None
+        return None         # als het openen niet lukt returnt niks
 
 def generate_dashboard():                #functie om de grafieken te maken
-    global memory_buffer, security_buffer, temp_buffer, load_buffer
+    global memory_buffer, security_buffer, temp_buffer, load_buffer   # Staat python toe om de globale variabelen aan te passen
 
     #dashboard layout 2x2 grid
-    fig, axes = plt.subplots(2, 2, figsize=(10, 6)) 
-    ax1, ax2, ax3, ax4 = axes.flatten()
+    fig, axes = plt.subplots(2, 2, figsize=(10, 6))    # 2 rijen, 2 kolommen, grootte 10x6 inch
+    ax1, ax2, ax3, ax4 = axes.flatten()        # Haal alle assen uit de grid voor eenvoudig gebruik
 
-    MAX_POINTS = 60
+    MAX_POINTS = 60     # Maximum aantal plot points op de X as. 60 voor de laatste minuut
 
-    def update_buffer(buf, value):
-        if value is not None:
-            buf.append(value)
-        if len(buf) > MAX_POINTS:
+    def update_buffer(buf, value):    # Functie om de buffer bij te houden zodat de grafiek blijft doorlopen 
+        if value is not None:     # Als de waarde die wordt meegegeven iets bevat wordt dit toegevoegd aan een lijst
+            buf.append(value)     
+        if len(buf) > MAX_POINTS:  # Als de lijst groter wordt dan het maximum aantan punten wordt de eerste waarde eruit gehaald en schuift de rest door
             buf.pop(0)
 
-    #leest de laatste value uit de log
+    #leest de laatste value uit de log en slaat deze op in een variabele
     mem = read_last_value(memory_file)
     sec = read_last_value(security_file)
     tmp = read_last_value(cpu_temp_file)
@@ -69,20 +69,20 @@ def generate_dashboard():                #functie om de grafieken te maken
     update_buffer(temp_buffer, tmp)
     update_buffer(load_buffer, lod)
 
-    #x-as 60 seconde refresh
-    x_mem = list(range(len(memory_buffer)))
+    # Geeft het aantal waardes in de memory buffer terug. Range maakt daar een reeks van en list zet deze reeks om in een lijst. Deze lijsten worden de x waardes van de grafieken
+    x_mem = list(range(len(memory_buffer)))  
     x_sec = list(range(len(security_buffer)))
     x_tmp = list(range(len(temp_buffer)))
     x_lod = list(range(len(load_buffer)))
 
     #memory usage
-    ax1.plot(x_mem, memory_buffer)
-    ax1.set_xlim(0, 60)
-    ax1.set_title("Memory Usage In %")
-    ax1.set_ylim(0, 100)
-    ax1.set_xticklabels([])
-    ax1.set_xlabel("Last 60 seconds")
-
+    ax1.plot(x_mem, memory_buffer)      # Plot de opgehaalde data
+    ax1.set_xlim(0, 60)                 # Zet de x as vast op 0 tot 60 (1 minuut)
+    ax1.set_title("Memory Usage In %")  # Zet een titel boven de grafiek
+    ax1.set_ylim(0, 100)                # Zet de y as vast op 0 tot 100 (Logische waarden voor temperatuur)
+    ax1.set_xticklabels([])             # zorgt ervoor dat de x as geen getallen laat zien
+    ax1.set_xlabel("Last 60 seconds")   # zet een label bij de x as
+                    # de rest van de grafieken volgen dezelfde logica. voor uitleg refereer aan bovenstaande comments
     #failed logins
     ax2.plot(x_sec, security_buffer)
     ax2.set_xlim(0, 60)
@@ -107,14 +107,14 @@ def generate_dashboard():                #functie om de grafieken te maken
     ax4.set_xticklabels([])
     ax4.set_xlabel("Last 60 seconds")
 
-    plt.tight_layout()
-
+    plt.tight_layout()          # Zorgt dat de titels en labels elkaar niet overlappen
+ 
     img = io.BytesIO()
-    fig.savefig(img, format="png")
-    plt.close(fig)
-    img.seek(0)
+    fig.savefig(img, format="png")           # Sla de figuur op in het geheuhen als PNG
+    plt.close(fig)                          # Sluit hem weer om geheugen vrij te maken
+    img.seek(0)       # Zet de pointer terug naar het begin van de afbeelding. Als deze lijn ontbreekt blijven de grafieken leeg
 
-    return img
+    return img       # Returnt de png voor gebruik in de webserver
 
 @app.route("/dashboard.png")
 def dashboard():
@@ -122,10 +122,10 @@ def dashboard():
     return Response(img.getvalue(), mimetype="image/png")
 
 #HTLM van de webserver
-@app.route("/")      
-def index():       
-                     
-    return """       
+@app.route("/")         # Hoofdpagina van de webserver
+def index():            # Voer deze functie uit als iemand de hoofdpagina bezoekt
+                      # Returnt de volgende HTML code
+    return """            
     <html>
     <body>
     <h2>System Monitoring Dashboard</h2>
@@ -140,13 +140,12 @@ def index():
     </body>
     </html>
     """
-def start_web_server():
-    thread = threading.Thread(
-        target=lambda: app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
-    )
-    thread.daemon = True
-    thread.start()
-    return thread
+#def start_web_server():              # Functie om de webserver te starten
+#    thread = threading.Thread(       #
+#        target=lambda: app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
+ #   )
+#    thread.daemon = True
+#    thread.start()
+#    return thread
 
-if __name__ == "__main__":                
-    app.run(host="0.0.0.0", port=5000)          # Runt de webserver lokaal op poort 5000
+
