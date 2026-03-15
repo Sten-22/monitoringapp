@@ -4,20 +4,21 @@ import configparser
 import os
 import datetime
 
-config = configparser.ConfigParser()             #
-config.read("config.ini")
+config = configparser.ConfigParser()          # Zet de varibale voor het config bestand
+config.read("config.ini")                     # Leest de config ini uit voor de instellingen
 
-xml_rpc_port = config.getint("network", "xml_rpc_port")
+        # slaat de variabelen op met waardes uit de config.ini
+xml_rpc_port = config.getint("network", "xml_rpc_port")     
 xml_rpc_host = config["network"]["host"]  
 
-memorylog = config["logging"]["memorylog"]          # Haalt de naam van het memorylog uit het ini bestand
+memorylog = config["logging"]["memorylog"]          
 securitylog = config["logging"]["securitylog"]
 cputemplog = config["logging"]["cputemplog"]
 cpuloadlog = config["logging"]["cpuloadlog"]
 
 
-max_log_size = 1000000     # Staat gelijk aan 1 mb
-max_backup_files = 3   
+max_log_size = 1000000     # Staat gelijk aan 1 mb. Maximale waarde waarna de log wordt gearchiveerd als backup
+max_backup_files = 3       # maximum aantal backups waarna de logs weggegooid worden
 
 def rotate_log(logfile):
     if not os.path.exists(logfile):  # Als bestand niet bestaat: niks doen

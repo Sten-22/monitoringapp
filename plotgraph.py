@@ -11,7 +11,7 @@ config = configparser.ConfigParser()
 config.read("config.ini")                 # Leest de Config.ini uit zodat de waardes gebruikt kunnen worden
 
 #haalt de namen van de log uit de ini file
-memorylog = config["logging"]["memorylog"] 
+memorylog = config["logging"]["memorylog"]         # slaat de variabelen op met waardes uit de config.ini
 securitylog = config["logging"]["securitylog"]
 cputemplog = config["logging"]["cputemplog"]
 cpuloadlog = config["logging"]["cpuloadlog"]

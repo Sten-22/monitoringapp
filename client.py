@@ -7,10 +7,10 @@ from threading import Thread
 from PyLibreHardwareMonitor import Computer
 import configparser
 
-config = configparser.ConfigParser()             
+config = configparser.ConfigParser()      # Variabele voor het het config bestand    
 config.read("config.ini")                 # Leest de Config.ini uit zodat de waardes gebruikt kunnen worden
 
-host = config["network"]["host"] 
+host = config["network"]["host"]                  # slaat de variabelen op met waardes uit de config.ini
 xml_rpc_port = config["network"]["xml_rpc_port"] 
 
 INTERVAL_SECONDS = 60                 # Deze variabele bepaalt hoeveel seconden terug in de security log wordt gekeken voor failed logins
