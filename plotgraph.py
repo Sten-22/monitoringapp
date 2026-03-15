@@ -69,7 +69,7 @@ def generate_dashboard():                #functie om de grafieken te maken
     update_buffer(temp_buffer, tmp)
     update_buffer(load_buffer, lod)
 
-    # Geeft het aantal waardes in de memory buffer terug. Range maakt daar een reeks van en list zet deze reeks om in een lijst. Deze lijsten worden de x waardes van de grafieken
+    # Geeft het aantal waardes in de buffer terug. Range maakt daar een reeks van en list zet deze reeks om in een lijst. Deze lijsten worden de x waardes van de grafieken
     x_mem = list(range(len(memory_buffer)))  
     x_sec = list(range(len(security_buffer)))
     x_tmp = list(range(len(temp_buffer)))
@@ -116,10 +116,10 @@ def generate_dashboard():                #functie om de grafieken te maken
 
     return img       # Returnt de png voor gebruik in de webserver
 
-@app.route("/dashboard.png")
-def dashboard():
-    img = generate_dashboard()
-    return Response(img.getvalue(), mimetype="image/png")
+@app.route("/dashboard.png")   
+def dashboard():          # Wanneer iemand het dashboard bezoekt wortdt deze functie uitgevoerd
+    img = generate_dashboard()    
+    return Response(img.getvalue(), mimetype="image/png")        # returnt de output als png
 
 #HTLM van de webserver
 @app.route("/")         # Hoofdpagina van de webserver
