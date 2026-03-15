@@ -16,9 +16,9 @@ securitylog = config["logging"]["securitylog"]
 cputemplog = config["logging"]["cputemplog"]
 cpuloadlog = config["logging"]["cpuloadlog"]
 
-
-max_log_size = 1000000     # Staat gelijk aan 1 mb. Maximale waarde waarna de log wordt gearchiveerd als backup
-max_backup_files = 3       # maximum aantal backups waarna de logs weggegooid worden
+max_log_size = config.getint("logging", "max_log_size")  # Maximale waarde waarna de log wordt gearchiveerd als backup
+max_backup_files = config.getint("logging", "max_backup_files") # Maximum aantal backups waarna de logs weggegooid worden
+ 
 
 def rotate_log(logfile):
     if not os.path.exists(logfile):  # Als bestand niet bestaat: niks doen
